@@ -8,7 +8,7 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "server": "tsx --watch src/index.ts"
+    "server": "tsx --watch src/Closet.ts"
   },
   "dependencies": {
     "@fastify/cors": "^11.0.1",

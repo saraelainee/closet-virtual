@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom'
 import './Container.css'; // Assumindo que você tem um arquivo CSS compartilhado
 
 // Interface para a tabela Produto
@@ -11,6 +12,7 @@ interface Produto {
 }
 
 function ContainerProduto() {
+  const navigate = useNavigate()
   // Estados para os campos do formulário e mensagens de erro
   const [idproduto, setIDProduto] = useState<string>("");
   const [nome_produto, setNome_Produto] = useState<string>("");
@@ -165,6 +167,10 @@ function ContainerProduto() {
           )}
         </div>
       </div>
+
+      <button onClick={() => navigate('/')} className="Container-button">
+        Voltar para Página Inicial
+      </button>
     </>
   )
 }

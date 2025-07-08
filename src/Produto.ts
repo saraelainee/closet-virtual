@@ -6,21 +6,22 @@ const app = fastify()
 app.register(cors)
 
 
+
 app.get("/", (_request: FastifyRequest, reply: FastifyReply) => {
     reply.send("Fastify Funcionando!")
 })
-app.get("/produtos", async (_request: FastifyRequest, reply: FastifyReply) => {
+app.get("/produto", async (_request: FastifyRequest, reply: FastifyReply) => {
    
     try {
         const conn = await mysql.createConnection( {
           host: "localhost",
           user: 'root',
           password: "",
-          database: 'frameworwprodutos',
+          database: 'closetvirtual',
       });
 
       console.log("Conexão com o banco de dados estabelecida com sucesso!");
-        const resultado = await conn.query("SELECT * FROM produtos")
+        const resultado = await conn.query("SELECT * FROM produto")
         const [dados] = resultado
         reply.send(dados)
 

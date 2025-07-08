@@ -1,28 +1,51 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-// import './index.css'
-
-import Header from './Header.tsx'
-import Container from './Container.tsx'
-import Home from './Home.tsx'
 import './main.css'
 
-import {createBrowserRouter, RouterProvider, Link} from 'react-router-dom'
+import Container from './Container.tsx'
+import Closets from './Closet.tsx'
+import Categorias from './Categoria.tsx'
+import Produtos from './Produto.tsx'
 
-const rotas = createBrowserRouter ([
+import {
+  createBrowserRouter,
+  RouterProvider,
+  useNavigate
+} from 'react-router-dom'
+
+function ContainerWrapper() {
+  const navigate = useNavigate()
+
+  const caminharPagina = (page: 'container' | 'closets' | 'categorias' | 'produtos') => {
+    navigate('/' + page)
+  }
+
+  return <Container onNavigate={caminharPagina} />
+}
+
+
+const rotas = createBrowserRouter([
   {
-    path: '/', 
-    element: <Container />
+    path: '/',
+    element: <ContainerWrapper /> //Wrapper abriga outras funções, componente intermediário que passa o onNavigate
   },
   {
-
+    path: '/closets',
+    element: <Closets />
+  },
+  {
+    path: '/categorias',
+    element: <Categorias />
+  },
+  {
+    path: '/produtos',
+    element: <Produtos />
   }
 ])
 
-
+// Encaminha de volta 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Header />
-    <RouterProvider router={rotas}/>
+    <RouterProvider router={rotas} />
   </StrictMode>
 )

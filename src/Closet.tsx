@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom'
 import './Container.css'; // Assumindo que você tem um arquivo CSS compartilhado
 
 // Interface para a tabela Closet
@@ -9,6 +10,7 @@ interface Closet {
 }
 
 function ContainerCloset() {
+  const navigate = useNavigate()
   // Estados para os campos do formulário e mensagens de erro
   const [idcloset, setIDCloset] = useState<string>("");
   const [nome_closet, setNome_Closet] = useState<string>("");
@@ -43,6 +45,11 @@ function ContainerCloset() {
   // Função para lidar com o envio do formulário de cadastro de closet
   async function trataForm(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); // Impede o recarregamento da página
+
+    if (!idcloset || !nome_closet || !proprietario) {
+      setErroMensagem("Todos os campos são obrigatórios!");
+      return;
+    }
 
     // Cria um novo objeto Closet com os dados do formulário
     const novoCloset: Closet = {
@@ -139,6 +146,10 @@ function ContainerCloset() {
           )}
         </div>
       </div>
+
+      <button onClick={() => navigate('/')} className="Container-button">
+        Voltar para Página Inicial
+      </button>
     </>
   )
 }
