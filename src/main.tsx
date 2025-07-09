@@ -16,7 +16,7 @@ import {
 function ContainerWrapper() {
   const navigate = useNavigate()
 
-  const caminharPagina = (page: 'container' | 'closets' | 'categorias' | 'produtos') => {
+  const caminharPagina = (page: 'container' | 'closet' | 'categoria' | 'produto') => {
     navigate('/' + page)
   }
 
@@ -30,15 +30,15 @@ const rotas = createBrowserRouter([
     element: <ContainerWrapper /> //Wrapper abriga outras funções, componente intermediário que passa o onNavigate
   },
   {
-    path: '/closets',
+    path: '/closet',
     element: <Closets />
   },
   {
-    path: '/categorias',
+    path: '/categoria',
     element: <Categorias />
   },
   {
-    path: '/produtos',
+    path: '/produto',
     element: <Produtos />
   }
 ])

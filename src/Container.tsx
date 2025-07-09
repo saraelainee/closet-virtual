@@ -2,7 +2,7 @@
 
 // Definimos a interface para as props que Home vai receber
 interface ContainerProps {
-  onNavigate: (page: 'container' | 'closets' | 'categorias' | 'produtos') => void;
+  onNavigate: (page: 'container' | 'closet' | 'categoria' | 'produto') => void;
 }
 
 
@@ -14,13 +14,13 @@ function Container({ onNavigate }: ContainerProps) { //Props: mecanismo que pass
 
       <div className="Container-buttons">
         {/* Ao clicar, chamamos a função onNavigate passando a página desejada */}
-        <button onClick={() => onNavigate('closets')} className="Container-button">
+        <button onClick={() => onNavigate('closet')} className="Container-button">
           Gerenciar Closets
         </button>
-        <button onClick={() => onNavigate('categorias')} className="Container-button">
+        <button onClick={() => onNavigate('categoria')} className="Container-button">
           Gerenciar Categorias
         </button>
-        <button onClick={() => onNavigate('produtos')} className="Container-button">
+        <button onClick={() => onNavigate('produto')} className="Container-button">
           Gerenciar Produtos
         </button>
       </div>
