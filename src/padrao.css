@@ -1,0 +1,204 @@
+/* --- General Body and Typography --- */
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #ffffff;
+  color: #252525;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: #c52563;
+}
+
+p {
+  line-height: 1.6;
+}
+
+/* --- Main Container and Layout --- */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.container-cadastro,
+.container-listagem {
+  background-color: #f8f9fa;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* --- Header --- */
+header {
+  background-color: #252525;
+  color: #ffffff;
+  padding: 1rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+}
+
+header nav a {
+  color: #ffffff;
+  text-decoration: none;
+  margin: 0 0.5rem;
+  transition: color 0.3s ease;
+}
+
+header nav a:hover {
+  color: #ea4c89;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+}
+
+/* --- Buttons --- */
+.Container-button,
+.Gerenciar-button,
+button,
+input[type="submit"] {
+  background-color: #c52563;
+  color: #ffffff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 25px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.Container-button:hover,
+.Gerenciar-button:hover,
+button:hover,
+input[type="submit"]:hover {
+  background-color: #ea4c89;
+  transform: translateY(-2px);
+}
+
+/* --- Forms --- */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="email"],
+input[type="password"] {
+  padding: 0.8rem;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus {
+  outline: none;
+  border-color: #ea4c89;
+  box-shadow: 0 0 0 3px rgba(234, 76, 137, 0.2);
+}
+
+/* --- Specific Component Styling --- */
+.gerenciar, .container {
+  text-align: center;
+}
+
+.Gerenciar-buttons, .Container-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.Gerenciar-info, .Container-info {
+  font-style: italic;
+  color: #6c757d;
+}
+
+.container-listagem h2 {
+  border-bottom: 2px solid #ea4c89;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.container-categoria, .container-item {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  text-align: left;
+}
+
+.botoes-categoria {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.botoes-categoria button {
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  border-radius: 15px;
+}
+
+/* --- MostraTudo Component --- */
+.mostratudo {
+  padding: 2rem;
+  text-align: center;
+}
+
+.mostratudo h1, .mostratudo h2 {
+  color: #c52563;
+}
+
+.mostratudo button {
+  margin: 0.5rem;
+}
+
+.mostratudo ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.mostratudo li {
+  background-color: #f8f9fa;
+  margin: 0.5rem auto;
+  padding: 1rem;
+  border-radius: 8px;
+  max-width: 600px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.mensagem-erro {
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 1rem;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  text-align: center;
+}

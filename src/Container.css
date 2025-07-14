@@ -1,48 +1,80 @@
-.mensagem-erro{
-    position: fixed;
-    border: 1px solid rgb(158, 67, 201);
-    width: fit-content;
-    padding: 0px 15px;
-    right: 15px;
-    background-color: #DC3545;
-    color:white
-}
-.container{
-    margin-top: 150px;
-    display: flex;
-    gap:15px
-}
-.container-listagem{
-    flex:3;
-    display: flex;
-    gap: 32px;
-    flex-wrap: wrap;
-}
-.container-cadastro{
-    flex:1;
-    box-shadow: 0px 0px 10px 2px #F0F0F0;
-    padding: 32px;
-    box-sizing: border-box;
+/* Paleta de cores */
+:root {
+  --branco: #ffffff;
+  --preto: #292929;
+  --rosa-escuro: #c52563;
+  --rosa-claro: #ea4c89;
 }
 
-.container-cadastro form{
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+body {
+  background: linear-gradient(to right, #ffffff, #ea4c89);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--preto);
+  margin: 0;
+  padding: 0;
 }
 
-input{
-    padding: 10px 10px;
-    border: 1px solid #F0F0F0;
-    outline: none;
-}
-input[type="text"]:focus{
-    outline: 1px solid lightblue;
+.container {
+  text-align: center;
+  padding: 60px 20px;
 }
 
-.container-produto{
-    box-shadow: 0px 0px 10px 2px #F0F0F0;
-    padding: 32px;
-    box-sizing: border-box;
-    max-height: 250px;
+.container h1 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.container p {
+  font-size: 16px;
+  margin-bottom: 25px;
+}
+
+.Container-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.Container-button {
+  background-color: var(--preto);
+  color: var(--branco);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: 200px;
+}
+
+.Container-button:hover {
+  background-color: var(--rosa-escuro);
+}
+
+.Container-info {
+  font-size: 14px;
+  color: var(--preto);
+}
+
+/* Botão "Administração" */
+.containerAdm {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 30px 20px;
+}
+
+.containerAdm .Container-button {
+  background-color: var(--preto);
+  color: var(--branco);
+  width: auto;
+  padding: 8px 16px;
+  font-size: 12px;
+}
+
+.containerAdm .Container-button:hover {
+  background-color: var(--preto);
+  color: var(--branco);
 }

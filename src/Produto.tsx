@@ -1,178 +1,223 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom'
-import './Container.css'; // Assumindo que você tem um arquivo CSS compartilhado
+import { useNavigate } from 'react-router-dom';
+import './Container.css';
 
-// Interface para a tabela Produto
 interface Produto {
   idproduto: number;
   nome_produto: string;
   cor_produto: string;
-  closet_idcloset: number; // Chave estrangeira para Closet
-  categoria_idcategoria: number; // Chave estrangeira para Categoria
+  closet_idcloset: number;
+  categoria_idcategoria: number;
 }
 
 function ContainerProduto() {
-  const navigate = useNavigate()
-  // Estados para os campos do formulário e mensagens de erro
-  const [idproduto, setIDProduto] = useState<string>("");
-  const [nome_produto, setNome_Produto] = useState<string>("");
-  const [cor_produto, setCor_Produto] = useState<string>("");
-  const [closet_idcloset, setCloset_idcloset] = useState<string>(""); // Estado para a FK de Closet
-  const [categoria_idcategoria, setCategoria_idcategoria] = useState<string>(""); // Estado para a FK de Categoria
-  const [erroMensagem, setErroMensagem] = useState<string>("");
+  const navigate = useNavigate();
 
-  // Estado para armazenar a lista de produtos fetched do backend
+  const [idproduto, setIDProduto] = useState("");
+  const [nome_produto, setNomeProduto] = useState("");
+  const [cor_produto, setCorProduto] = useState("");
+  const [closet_idcloset, setClosetIdCloset] = useState("");
+  const [categoria_idcategoria, setCategoriaIdCategoria] = useState("");
+  const [erroMensagem, setErroMensagem] = useState("");
+  const [modoEdicao, setModoEdicao] = useState(false);
+
   const [produtos, setProdutos] = useState<Produto[]>([]);
 
-  // useEffect para buscar os dados dos produtos quando o componente é montado
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Endpoint para buscar todos os PRODUTOS
-        // ASSUMIR que este é o endpoint correto no seu backend
-        const resposta = await fetch("http://localhost:8000/produtos");
-        if (resposta.status === 200) {
-          const result = await resposta.json();
-          setProdutos(result); // Atualiza o estado com os produtos recebidos
-        }
-        if (resposta.status === 400) {
-          const result = await resposta.json();
-          setErroMensagem(result.mensagem); // Define a mensagem de erro se houver
-        }
-      } catch (erro: any) {
-        setErroMensagem("Erro ao realizar o fetch no backend "); // Erro de rede ou servidor
+    buscarProdutos();
+  }, []);
+
+  async function buscarProdutos() {
+    try {
+      const resposta = await fetch("http://localhost:8000/produto");
+      if (resposta.ok) {
+        const data = await resposta.json();
+        setProdutos(data);
       }
+    } catch {
+      setErroMensagem("Erro ao carregar produtos.");
     }
-    fetchData(); // Chama a função de busca de dados
-  }, []); // O array vazio [] garante que o useEffect rode apenas uma vez (no montagem)
+  }
 
-  // Função para lidar com o envio do formulário de cadastro de produto
-  async function trataForm(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault(); // Impede o recarregamento da página
+  async function cadastrarProduto(event: React.FormEvent) {
+    event.preventDefault();
 
-    // Cria um novo objeto Produto com os dados do formulário
-    const novoProduto: Produto = {
-      idproduto: parseInt(idproduto), // Converte o ID para número inteiro
+    const novo = {
       nome_produto,
       cor_produto,
-      closet_idcloset: parseInt(closet_idcloset), // Converte a FK para número
-      categoria_idcategoria: parseInt(categoria_idcategoria) // Converte a FK para número
+      closet_idcloset: parseInt(closet_idcloset),
+      categoria_idcategoria: parseInt(categoria_idcategoria),
     };
 
-    // Adiciona o novo produto à lista local imediatamente para uma resposta mais rápida na UI
-    setProdutos([...produtos, novoProduto]);
-
     try {
-      // Endpoint para enviar o novo produto para o backend via método POST
-      // ASSUMIR que este é o endpoint correto no seu backend
-      const resposta = await fetch("http://localhost:8000/produtos", {
-        method: "POST", // Método HTTP para criação de recurso
-        headers: {
-          "Content-Type": "application/json" // Define o tipo de conteúdo como JSON
-        },
-        body: JSON.stringify(novoProduto) // Converte o objeto JavaScript para JSON
+      const resposta = await fetch("http://localhost:8000/produto", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(novo),
       });
 
-      if (resposta.status === 200) {
-        const result = await resposta.json();
-        // Se o backend retornar o objeto criado com o ID real, atualiza a lista novamente
-        setProdutos([...produtos, result]);
-        // Opcional: Limpar os campos do formulário após o sucesso
-        setIDProduto("");
-        setNome_Produto("");
-        setCor_Produto("");
-        setCloset_idcloset("");
-        setCategoria_idcategoria("");
+      if (resposta.ok) {
+        await buscarProdutos();
+        limparFormulario();
+      } else {
+        const data = await resposta.json();
+        setErroMensagem(data.mensagem || "Erro ao cadastrar produto.");
       }
-      if (resposta.status === 400) {
-        const result = await resposta.json();
-        setErroMensagem(result.mensagem); // Define a mensagem de erro se o backend retornar
-      }
-    } catch (erro: any) {
-      setErroMensagem("Erro ao realizar o fetch no backend "); // Erro de rede ou servidor
+    } catch {
+      setErroMensagem("Erro de conexão.");
     }
   }
 
-  // Funções de tratamento de mudança para cada campo de entrada do formulário
-  function trataIDProduto(event: React.ChangeEvent<HTMLInputElement>) {
-    setIDProduto(event.target.value);
+  async function editarProduto(event: React.FormEvent) {
+    event.preventDefault();
+
+    const atual = {
+      idproduto: parseInt(idproduto),
+      nome_produto,
+      cor_produto,
+      closet_idcloset: parseInt(closet_idcloset),
+      categoria_idcategoria: parseInt(categoria_idcategoria),
+    };
+
+    try {
+      const resposta = await fetch(`http://localhost:8000/produto/${idproduto}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(atual),
+      });
+
+      if (resposta.ok) {
+        await buscarProdutos();
+        limparFormulario();
+      } else {
+        const data = await resposta.json();
+        setErroMensagem(data.mensagem || "Erro ao editar produto.");
+      }
+    } catch {
+      setErroMensagem("Erro de conexão.");
+    }
   }
-  function trataNome_Produto(event: React.ChangeEvent<HTMLInputElement>) {
-    setNome_Produto(event.target.value);
+
+  async function excluirProduto(id: number) {
+    const confirmar = window.confirm("Deseja realmente excluir?");
+    if (!confirmar) return;
+
+    try {
+      const resposta = await fetch(`http://localhost:8000/produto/${id}`, {
+        method: "DELETE",
+      });
+
+      if (resposta.ok) {
+        await buscarProdutos();
+        setErroMensagem("");
+      } else {
+        const data = await resposta.json();
+        setErroMensagem(data.erro || "Erro ao excluir produto.");
+      }
+    } catch {
+      setErroMensagem("Erro de conexão com o servidor.");
+    }
   }
-  function trataCor_Produto(event: React.ChangeEvent<HTMLInputElement>) {
-    setCor_Produto(event.target.value);
+
+  function preencherFormulario(p: Produto) {
+    setIDProduto(p.idproduto.toString());
+    setNomeProduto(p.nome_produto);
+    setCorProduto(p.cor_produto);
+    setClosetIdCloset(p.closet_idcloset.toString());
+    setCategoriaIdCategoria(p.categoria_idcategoria.toString());
+    setModoEdicao(true);
   }
-  function trataCloset_idcloset(event: React.ChangeEvent<HTMLInputElement>) {
-    setCloset_idcloset(event.target.value);
-  }
-  function trataCategoria_idcategoria(event: React.ChangeEvent<HTMLInputElement>) {
-    setCategoria_idcategoria(event.target.value);
+
+  function limparFormulario() {
+    setIDProduto("");
+    setNomeProduto("");
+    setCorProduto("");
+    setClosetIdCloset("");
+    setCategoriaIdCategoria("");
+    setModoEdicao(false);
+    setErroMensagem("");
   }
 
   return (
     <>
-      {erroMensagem && // Exibe mensagem de erro se existir
+      {erroMensagem && (
         <div className="mensagem-erro">
           <p>{erroMensagem}</p>
         </div>
-      }
+      )}
 
       <div className="container">
         <div className="container-cadastro">
-          <h1>Cadastro de Produtos</h1>
-          <form onSubmit={trataForm}>
-            <label htmlFor="idproduto">ID Produto:</label>
-            <input type="number" name="idproduto" id="idproduto" onChange={trataIDProduto} value={idproduto} placeholder="ID Produto" />
+          <h1>{modoEdicao ? "Editar Produto" : "Cadastrar Produto"}</h1>
+          <form onSubmit={modoEdicao ? editarProduto : cadastrarProduto}>
+            {modoEdicao && (
+              <input
+                type="number"
+                placeholder="ID Produto"
+                value={idproduto}
+                disabled
+              />
+            )}
+            <input
+              type="text"
+              placeholder="Nome do Produto"
+              value={nome_produto}
+              onChange={e => setNomeProduto(e.target.value)}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Cor do Produto"
+              value={cor_produto}
+              onChange={e => setCorProduto(e.target.value)}
+              required
+            />
+            <input
+              type="number"
+              placeholder="ID Closet (FK)"
+              value={closet_idcloset}
+              onChange={e => setClosetIdCloset(e.target.value)}
+              required
+            />
+            <input
+              type="number"
+              placeholder="ID Categoria (FK)"
+              value={categoria_idcategoria}
+              onChange={e => setCategoriaIdCategoria(e.target.value)}
+              required
+            />
 
-            <label htmlFor="nome_produto">Nome do Produto:</label>
-            <input type="text" name="nome_produto" id="nome_produto" onChange={trataNome_Produto} value={nome_produto} placeholder="Nome do Produto" />
-
-            <label htmlFor="cor_produto">Cor do Produto:</label>
-            <input type="text" name="cor_produto" id="cor_produto" onChange={trataCor_Produto} value={cor_produto} placeholder="Cor do Produto" />
-
-            <label htmlFor="closet_idcloset">ID do Closet:</label>
-            <input type="number" name="closet_idcloset" id="closet_idcloset" onChange={trataCloset_idcloset} value={closet_idcloset} placeholder="ID do Closet (FK)" />
-
-            <label htmlFor="categoria_idcategoria">ID da Categoria:</label>
-            <input type="number" name="categoria_idcategoria" id="categoria_idcategoria" onChange={trataCategoria_idcategoria} value={categoria_idcategoria} placeholder="ID da Categoria (FK)" />
-
-            <input type="submit" value="Cadastrar Produto" />
+            <input type="submit" value={modoEdicao ? "Salvar Edição" : "Cadastrar"} />
+            {modoEdicao && (
+              <button type="button" onClick={limparFormulario}>
+                Cancelar
+              </button>
+            )}
           </form>
         </div>
+
         <div className="container-listagem">
           <h2>Lista de Produtos</h2>
-          {produtos.length === 0 ? (
-            <p>Nenhum produto cadastrado.</p>
-          ) : (
-            produtos.map(produto => {
-              return (
-                // Cada item na lista precisa de uma chave única para otimização do React
-                <div className="container-item" key={produto.idproduto}>
-                  <div className="item-nome">
-                    Nome: {produto.nome_produto}
-                  </div>
-                  <div className="item-cor">
-                    Cor: {produto.cor_produto}
-                  </div>
-                  <div className="item-closet-id">
-                    ID Closet: {produto.closet_idcloset}
-                  </div>
-                  <div className="item-categoria-id">
-                    ID Categoria: {produto.categoria_idcategoria}
-                  </div>
-                </div>
-              )
-            })
-          )}
+          {produtos.map(prod => (
+            <div className="container-item" key={prod.idproduto}>
+              <div><strong>Nome:</strong> {prod.nome_produto}</div>
+              <div><strong>Cor:</strong> {prod.cor_produto}</div>
+              <div><strong>ID Closet:</strong> {prod.closet_idcloset}</div>
+              <div><strong>ID Categoria:</strong> {prod.categoria_idcategoria}</div>
+              <div className="botoes-categoria">
+                <button onClick={() => preencherFormulario(prod)}>✏️ Editar</button>
+                <button onClick={() => excluirProduto(prod.idproduto)}>🗑️ Deletar</button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
       <button onClick={() => navigate('/')} className="Container-button">
-        Voltar para Página Inicial
+        Voltar
       </button>
     </>
-  )
+  );
 }
 
 export default ContainerProduto;

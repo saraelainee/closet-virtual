@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from 'react-router-dom'
-import './Container.css'; // Assumindo que você tem um arquivo CSS compartilhado
+import { useNavigate } from 'react-router-dom';
+import './Container.css';
 
-// Interface para a tabela Closet
 interface Closet {
   idcloset: number;
   nome_closet: string;
@@ -10,148 +9,191 @@ interface Closet {
 }
 
 function ContainerCloset() {
-  const navigate = useNavigate()
-  // Estados para os campos do formulário e mensagens de erro
-  const [idcloset, setIDCloset] = useState<string>("");
-  const [nome_closet, setNome_Closet] = useState<string>("");
-  const [proprietario, setProprietario] = useState<string>("");
-  const [erroMensagem, setErroMensagem] = useState<string>("");
+  const navigate = useNavigate();
 
-  // Estado para armazenar a lista de closets fetched do backend
+  const [idcloset, setIDCloset] = useState("");
+  const [nome_closet, setNomeCloset] = useState("");
+  const [proprietario, setProprietario] = useState("");
+  const [erroMensagem, setErroMensagem] = useState("");
+  const [modoEdicao, setModoEdicao] = useState(false);
+
   const [closets, setClosets] = useState<Closet[]>([]);
 
-  // useEffect para buscar os dados dos closets quando o componente é montado
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Endpoint para buscar todos os CLOSETS
-        // ASSUMIR que este é o endpoint correto no seu backend
-        const resposta = await fetch("http://localhost:8000/closets");
-        if (resposta.status === 200) {
-          const result = await resposta.json();
-          setClosets(result); // Atualiza o estado com os closets recebidos
-        }
-        if (resposta.status === 400) {
-          const result = await resposta.json();
-          setErroMensagem(result.mensagem); // Define a mensagem de erro se houver
-        }
-      } catch (erro: any) {
-        setErroMensagem("Erro ao realizar o fetch no backend "); // Erro de rede ou servidor
+    buscarClosets();
+  }, []);
+
+  async function buscarClosets() {
+    try {
+      const resposta = await fetch("http://localhost:8000/closet");
+      if (resposta.ok) {
+        const data = await resposta.json();
+        setClosets(data);
       }
+    } catch {
+      setErroMensagem("Erro ao carregar closets.");
     }
-    fetchData(); // Chama a função de busca de dados
-  }, []); // O array vazio [] garante que o useEffect rode apenas uma vez (no montagem)
+  }
 
-  // Função para lidar com o envio do formulário de cadastro de closet
-  async function trataForm(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault(); // Impede o recarregamento da página
+  async function cadastrarCloset(event: React.FormEvent) {
+    event.preventDefault();
 
-    if (!idcloset || !nome_closet || !proprietario) {
-      setErroMensagem("Todos os campos são obrigatórios!");
-      return;
-    }
-
-    // Cria um novo objeto Closet com os dados do formulário
-    const novoCloset: Closet = {
-      idcloset: parseInt(idcloset), // Converte o ID para número inteiro
+    const novo = {
       nome_closet,
       proprietario,
     };
 
-    // Adiciona o novo closet à lista local imediatamente para uma resposta mais rápida na UI
-    setClosets([...closets, novoCloset]);
-
     try {
-      // Endpoint para enviar o novo closet para o backend via método POST
-      // ASSUMIR que este é o endpoint correto no seu backend
-      const resposta = await fetch("http://localhost:8000/closets", {
-        method: "POST", // Método HTTP para criação de recurso
-        headers: {
-          "Content-Type": "application/json" // Define o tipo de conteúdo como JSON
-        },
-        body: JSON.stringify(novoCloset) // Converte o objeto JavaScript para JSON
+      const resposta = await fetch("http://localhost:8000/closet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(novo),
       });
 
-      if (resposta.status === 200) {
-        const result = await resposta.json();
-        // Se o backend retornar o objeto criado com o ID real, atualiza a lista novamente
-        setClosets([...closets, result]);
-        // Opcional: Limpar os campos do formulário após o sucesso
-        setIDCloset("");
-        setNome_Closet("");
-        setProprietario("");
+      if (resposta.ok) {
+        await buscarClosets();
+        limparFormulario();
+      } else {
+        const data = await resposta.json();
+        setErroMensagem(data.mensagem || "Erro ao cadastrar closet.");
       }
-      if (resposta.status === 400) {
-        const result = await resposta.json();
-        setErroMensagem(result.mensagem); // Define a mensagem de erro se o backend retornar
-      }
-    } catch (erro: any) {
-      setErroMensagem("Erro ao realizar o fetch no backend "); // Erro de rede ou servidor
+    } catch {
+      setErroMensagem("Erro de conexão com o servidor.");
     }
   }
 
-  // Funções de tratamento de mudança para cada campo de entrada do formulário
-  function trataIDCloset(event: React.ChangeEvent<HTMLInputElement>) {
-    setIDCloset(event.target.value);
+  async function editarCloset(event: React.FormEvent) {
+    event.preventDefault();
+
+    const atual = {
+      idcloset: parseInt(idcloset),
+      nome_closet,
+      proprietario,
+    };
+
+    try {
+      const resposta = await fetch(`http://localhost:8000/closet/${idcloset}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(atual),
+      });
+
+      if (resposta.ok) {
+        await buscarClosets();
+        limparFormulario();
+      } else {
+        const data = await resposta.json();
+        setErroMensagem(data.mensagem || "Erro ao editar closet.");
+      }
+    } catch {
+      setErroMensagem("Erro de conexão com o servidor.");
+    }
   }
-  function trataNome_Closet(event: React.ChangeEvent<HTMLInputElement>) {
-    setNome_Closet(event.target.value);
+
+  async function excluirCloset(id: number) {
+    const confirmar = window.confirm("Deseja realmente excluir?");
+    if (!confirmar) return;
+
+    try {
+      const resposta = await fetch(`http://localhost:8000/closet/${id}`, {
+        method: "DELETE",
+      });
+
+      if (resposta.ok) {
+        await buscarClosets();
+        setErroMensagem("");
+      } else {
+        const data = await resposta.json();
+        setErroMensagem(data.erro || "Erro ao excluir closet.");
+      }
+    } catch {
+      setErroMensagem("Erro de conexão com o servidor.");
+    }
   }
-  function trataProprietario(event: React.ChangeEvent<HTMLInputElement>) {
-    setProprietario(event.target.value);
+
+  function preencherFormulario(c: Closet) {
+    setIDCloset(c.idcloset.toString());
+    setNomeCloset(c.nome_closet);
+    setProprietario(c.proprietario);
+    setModoEdicao(true);
+  }
+
+  function limparFormulario() {
+    setIDCloset("");
+    setNomeCloset("");
+    setProprietario("");
+    setModoEdicao(false);
+    setErroMensagem("");
   }
 
   return (
     <>
-      {erroMensagem && // Exibe mensagem de erro se existir
+      {erroMensagem && (
         <div className="mensagem-erro">
           <p>{erroMensagem}</p>
         </div>
-      }
+      )}
 
       <div className="container">
         <div className="container-cadastro">
-          <h1>Cadastro de Closets</h1>
-          <form onSubmit={trataForm}>
-            <label htmlFor="idcloset">ID Closet:</label>
-            <input type="number" name="idcloset" id="idcloset" onChange={trataIDCloset} value={idcloset} placeholder="ID Closet" />
-
-            <label htmlFor="nome_closet">Nome do Closet:</label>
-            <input type="text" name="nome_closet" id="nome_closet" onChange={trataNome_Closet} value={nome_closet} placeholder="Nome do Closet" />
-
-            <label htmlFor="proprietario">Proprietário:</label>
-            <input type="text" name="proprietario" id="proprietario" onChange={trataProprietario} value={proprietario} placeholder="Proprietário" />
-
-            <input type="submit" value="Cadastrar Closet" />
+          <h1>{modoEdicao ? "Editar Closet" : "Cadastrar Closet"}</h1>
+          <form onSubmit={modoEdicao ? editarCloset : cadastrarCloset}>
+            {modoEdicao && (
+              <input
+                type="number"
+                placeholder="ID Closet"
+                value={idcloset}
+                onChange={e => setIDCloset(e.target.value)}
+                disabled
+              />
+            )}
+            <input
+              type="text"
+              placeholder="Nome do Closet"
+              value={nome_closet}
+              onChange={e => setNomeCloset(e.target.value)}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Proprietário"
+              value={proprietario}
+              onChange={e => setProprietario(e.target.value)}
+              required
+            />
+            <input
+              type="submit"
+              value={modoEdicao ? "Salvar Edição" : "Cadastrar"}
+            />
+            {modoEdicao && (
+              <button type="button" onClick={limparFormulario}>
+                Cancelar
+              </button>
+            )}
           </form>
         </div>
+
         <div className="container-listagem">
           <h2>Lista de Closets</h2>
-          {closets.length === 0 ? (
-            <p>Nenhum closet cadastrado.</p>
-          ) : (
-            closets.map(closet => {
-              return (
-                // Cada item na lista precisa de uma chave única para otimização do React
-                <div className="container-item" key={closet.idcloset}>
-                  <div className="item-nome">
-                    Nome: {closet.nome_closet}
-                  </div>
-                  <div className="item-proprietario">
-                    Proprietário: {closet.proprietario}
-                  </div>
-                </div>
-              )
-            })
-          )}
+          {closets.map(closet => (
+            <div className="container-item" key={closet.idcloset}>
+              <div><strong>Nome:</strong> {closet.nome_closet}</div>
+              <div><strong>Proprietário:</strong> {closet.proprietario}</div>
+
+              <div className="botoes-categoria">
+                <button onClick={() => preencherFormulario(closet)}>✏️ Editar</button>
+                <button onClick={() => excluirCloset(closet.idcloset)}>🗑️ Deletar</button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
       <button onClick={() => navigate('/')} className="Container-button">
-        Voltar para Página Inicial
+        Voltar
       </button>
     </>
-  )
+  );
 }
 
 export default ContainerCloset;

@@ -1,22 +1,18 @@
 import type { FastifyInstance } from "fastify";
 import mysql from "mysql2/promise";
+import { databaseConfig } from "./databaseConfig.ts";
 
 export async function categoriaRoutes(app: FastifyInstance) {
     ///////////////////////// GET (já existente)  //////////////////////
     app.get("/categoria", async (_request, reply) => {
         try {
-            const conn = await mysql.createConnection({
-                host: "localhost",
-                user: "root",
-                password: "",
-                database: "closetvirtual",
-            });
+            const conn = await mysql.createConnection(databaseConfig);
 
             const [dados] = await conn.query("SELECT * FROM categoria");
             reply.send(dados);
         } catch (erro) {
             console.error("Erro ao buscar categorias:", erro);
-            reply.status(500).send({ erro: "Erro ao buscar categorias" });
+            reply.status(500).send({ erro: "Erro ao buscar categorias: " + erro });
         }
     });
 
@@ -37,12 +33,7 @@ export async function categoriaRoutes(app: FastifyInstance) {
                 return reply.status(400).send({ erro: "Dados incompletos" });
             }
 
-            const conn = await mysql.createConnection({
-                host: "localhost",
-                user: "root",
-                password: "",
-                database: "closetvirtual",
-            });
+            const conn = await mysql.createConnection(databaseConfig);
 
             const sql = "INSERT INTO categoria (nome_categoria, descricao, closet_idcloset) VALUES (?, ?, ?)";
             const [resultado] = await conn.execute(sql, [nome_categoria, descricao, closet_idcloset]);
@@ -50,7 +41,7 @@ export async function categoriaRoutes(app: FastifyInstance) {
             reply.status(201).send({ mensagem: "Categoria criada com sucesso", id: (resultado as any).insertId });
         } catch (erro) {
             console.error("Erro ao criar categoria:", erro);
-            reply.status(500).send({ erro: "Erro ao criar categoria" });
+            reply.status(500).send({ erro: "Erro ao criar categoria"+ erro });
         }
     });
 
@@ -66,12 +57,7 @@ export async function categoriaRoutes(app: FastifyInstance) {
         }
 
         try {
-            const conn = await mysql.createConnection({
-                host: "localhost",
-                user: "root",
-                password: "",
-                database: "closetvirtual",
-            });
+            const conn = await mysql.createConnection(databaseConfig);
 
             const sql = `
         UPDATE categoria 
@@ -106,12 +92,7 @@ export async function categoriaRoutes(app: FastifyInstance) {
         const { id } = request.params as any;
 
         try {
-            const conn = await mysql.createConnection({
-                host: "localhost",
-                user: "root",
-                password: "",
-                database: "closetvirtual",
-            });
+            const conn = await mysql.createConnection(databaseConfig);
 
             // CORREÇÃO: Usar idcategoria para deletar, não nome_categoria
             const sql = "DELETE FROM categoria WHERE idcategoria = ?";
