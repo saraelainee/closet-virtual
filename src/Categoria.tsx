@@ -101,7 +101,7 @@ function ContainerCategoria() {
     if (!confirmar) return;
 
     try {
-      // 2. Usar o ID na URL
+      // usar o ID na URL
       const resposta = await fetch(`http://localhost:8000/categoria/${id}`, {
         method: "DELETE",
       });
@@ -110,7 +110,7 @@ function ContainerCategoria() {
         await buscarCategorias();
         setErroMensagem(""); // Limpar erros antigos
       } else {
-        // 3. Exibir a mensagem de erro específica vinda do backend
+        // exibir a mensagem de erro específica vinda do backend
         const data = await resposta.json();
         setErroMensagem(data.erro || "Erro ao excluir categoria.");
       }

@@ -4,7 +4,7 @@ import { databaseConfig } from "./databaseConfig";
 
 export async function closetRoutes(app: FastifyInstance) {
 
-///////////////////////// GET (já existente)  //////////////////////
+///////////////////////// GET  //////////////////////
     app.get("/closet", async (_request, reply) => {
         try {
             const conn = await mysql.createConnection(databaseConfig);
@@ -17,7 +17,7 @@ export async function closetRoutes(app: FastifyInstance) {
         }
     });
 
-    ////////////////////// POST (novo)  //////////////////////////////
+    ////////////////////// POST (novo) //////////////////////////////
     type NovoCloset = {
         nome_closet: string;
         proprietario: string;
@@ -45,7 +45,7 @@ export async function closetRoutes(app: FastifyInstance) {
     });
 
 
-    /////////////////////////////  PUT (atualizar)  /////////////////////////////////////////
+    /////////////////////////////  PUT (atualizar) /////////////////////////////////////////
     app.put("/closet/:id", async (request: any, reply: any) => {
         const { id } = request.params as any;
         const body = request.body as any;
@@ -90,7 +90,7 @@ export async function closetRoutes(app: FastifyInstance) {
         try {
             const conn = await mysql.createConnection(databaseConfig);
 
-            // CORREÇÃO: Usar idcategoria para deletar, não nome_categoria
+            // Usar idcategoria para deletar, não nome_categoria
             const sql = "DELETE FROM closet WHERE idcloset = ?";
             const [resultado] = await conn.execute(sql, [id]);
     

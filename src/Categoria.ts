@@ -94,7 +94,7 @@ export async function categoriaRoutes(app: FastifyInstance) {
         try {
             const conn = await mysql.createConnection(databaseConfig);
 
-            // CORREÇÃO: Usar idcategoria para deletar, não nome_categoria
+          
             const sql = "DELETE FROM categoria WHERE idcategoria = ?";
             const [resultado] = await conn.execute(sql, [id]);
 

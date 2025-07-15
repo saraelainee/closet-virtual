@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from './Header';
 import './padrao.css';
 
 type Closet = {
@@ -60,7 +59,6 @@ export default function MostraTudo() {
 
     return (
         <>
-        <Header />
         <div className="mostratudo">
             <h1>Dados do Closet Virtual</h1>
             <p>Esta página exibe todos os dados do seu closet virtual.</p>
