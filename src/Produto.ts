@@ -4,7 +4,7 @@ import { databaseConfig } from "./databaseConfig";
 
 export async function produtoRoutes(app: FastifyInstance) {
 
-///////////////////////// GET (já existente)  //////////////////////
+    ///////////////////////// GET (já existente)  //////////////////////
     app.get("/produto", async (_request, reply) => {
         try {
             const conn = await mysql.createConnection(databaseConfig);
@@ -42,7 +42,7 @@ export async function produtoRoutes(app: FastifyInstance) {
             reply.status(201).send({ mensagem: "Categoria criada com sucesso", id: (resultado as any).insertId });
         } catch (erro) {
             console.error("Erro ao criar categoria:", erro);
-            reply.status(500).send({ erro: "Erro ao criar categoria: " + erro });
+            reply.status(500).send({ erro: "Erro ao criar produto: " + erro });
         }
     });
 

@@ -194,6 +194,21 @@ INSERT INTO `closetvirtual`.`categoria` (`idcategoria`, `nome_categoria`, `descr
 INSERT INTO `closetvirtual`.`produto` (`idproduto`, `nome_produto`, `cor_produto`, `closet_idcloset`, `categoria_idcategoria`) VALUES ('1', 'camisa manga longa', 'rosa', '2', '1');
 INSERT INTO `closetvirtual`.`produto` (`idproduto`, `nome_produto`, `cor_produto`, `closet_idcloset`, `categoria_idcategoria`) VALUES ('2', 'calça cargo', 'azul', '3', '2');
 INSERT INTO `closetvirtual`.`produto` (`idproduto`, `nome_produto`, `cor_produto`, `closet_idcloset`, `categoria_idcategoria`) VALUES ('3', 'Vestido princesa', 'multicor', '1', '3');
+
+#closet
+INSERT INTO `closetvirtual`.`closet` (`idcloset`, `nome_closet`, `proprietario`) VALUES ('5', 'Exemplo', 'De inserir');
+UPDATE `closetvirtual`.`closet` SET `proprietario` = 'De editar' WHERE (`idcloset` = '5');
+DELETE FROM `closetvirtual`.`closet` WHERE (`idcloset` = '5');
+
+#categoria
+INSERT INTO `closetvirtual`.`categoria` (`idcategoria`, `nome_categoria`, `descricao`, `closet_idcloset`) VALUES ('3', 'Exemplo', 'De inserir');
+UPDATE `closetvirtual`.`categoria` SET `descricao` = 'Editar' WHERE (`idcategoria` = '3');
+DELETE FROM `closetvirtual`.`categoria` WHERE (`idcategoria` = '3');
+
+#produto
+INSERT INTO `closetvirtual`.`produto` (`idproduto`, `nome_produto`, `cor_produto`, `closet_idcloset`, `categoria_idcategoria`) VALUES ('2', 'Exemplo', 'Inserção', '1', '2');
+UPDATE `closetvirtual`.`produto` SET `cor_produto` = 'Editar' WHERE (`idproduto` = '2');
+DELETE FROM `closetvirtual`.`produto` WHERE (`idproduto` = '2');
    ```
 
 4.  **Execute o Servidor (Backend):**
