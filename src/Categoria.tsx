@@ -149,7 +149,6 @@ function ContainerCategoria() {
         <div className="container-cadastro">
           <h1>{modoEdicao ? "Editar Categoria" : "Cadastrar Categoria"}</h1>
           <form onSubmit={modoEdicao ? editarCategoria : cadastrarCategoria}>
-            <input type="number" placeholder="ID Categoria" value={idcategoria} onChange={e => setIDCategoria(e.target.value)} required />
             <input type="text" placeholder="Nome da Categoria" value={nome_categoria} onChange={e => setNomeCategoria(e.target.value)} required />
             <input type="text" placeholder="Descrição" value={descricao} onChange={e => setDescricao(e.target.value)} required />
             <input type="number" placeholder="ID Closet (FK)" value={closet_idcloset} onChange={e => setClosetIdCloset(e.target.value)} required />

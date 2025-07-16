@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './padrao.css';
+import './Container.css';
 
 type Closet = {
     idcloset: number;
